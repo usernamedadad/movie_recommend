@@ -41,7 +41,7 @@ python  makemigrations
 python  migrate
 
 # 启动开发服务器
-python  runserver
+python manage.py runserver
 
 # 访问
 # 主站/登录: http://127.0.0.1:8000/
