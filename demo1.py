@@ -3,18 +3,13 @@ import pandas as pd
 import time
 import os
 
-# ================= 配置区域 =================
 API_KEY = '4615d1c8c5f6c47476f1914297a71704' 
 BASE_URL = 'https://api.themoviedb.org/3'
 IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500' # 图片前缀
 LANGUAGE = 'zh-CN'
 TARGET_COUNT = 2000  # 目标数量
 
-# 【新增】代理设置
-# TMDB 在国内无法直接访问，必须配置代理。
-# 请查看你的 VPN/代理软件的“本地端口”设置。
-# 常见端口：Clash (7890), v2rayN (10809), SSR (1080)
-# 如果你的端口不是 7890，请手动修改下面的数字
+
 PROXIES = {
     'http': 'http://127.0.0.1:10809',
     'https': 'http://127.0.0.1:10809'
