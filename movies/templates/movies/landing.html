@@ -1,0 +1,50 @@
+{% extends 'movies/base.html' %}
+
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center" style="background-color: rgba(255, 255, 255, 0.95); margin-top: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.3);">
+    <h1>欢迎来到电影推荐系统</h1>
+    <p class="lead">发现你喜欢的电影，基于你的口味个性化推荐</p>
+    <p>
+        <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button" style="margin-right: 20px;">立即登录</a>
+        <a class="btn btn-success btn-lg" href="{% url 'register' %}" role="button">注册账号</a>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">海量片库</h3>
+            </div>
+            <div class="panel-body text-center">
+                <span class="glyphicon glyphicon-film" aria-hidden="true" style="font-size: 50px; color: #337ab7;"></span>
+                <p style="margin-top: 20px;">收录数千部热门电影，涵盖各种类型</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">智能推荐</h3>
+            </div>
+            <div class="panel-body text-center">
+                <span class="glyphicon glyphicon-heart" aria-hidden="true" style="font-size: 50px; color: #d9534f;"></span>
+                <p style="margin-top: 20px;">基于协同过滤算法，懂你的观影喜好</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">互动分享</h3>
+            </div>
+            <div class="panel-body text-center">
+                <span class="glyphicon glyphicon-star" aria-hidden="true" style="font-size: 50px; color: #f0ad4e;"></span>
+                <p style="margin-top: 20px;">评分、收藏，记录你的观影足迹</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

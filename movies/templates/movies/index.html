@@ -1,0 +1,82 @@
+{% extends 'movies/base.html' %}
+
+{% block content %}
+<div class="row" id="filter-bar">
+    <div class="col-md-12">
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default filter-btn active" data-sort="default">默认</button>
+            <button type="button" class="btn btn-default filter-btn" data-sort="hot">热门</button>
+            <button type="button" class="btn btn-default filter-btn" data-sort="rating">评分</button>
+            <button type="button" class="btn btn-default filter-btn" data-sort="time">最新</button>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div class="row" id="movie-list">
+    <!-- Movies will be loaded here via JS -->
+    <div class="col-md-12 text-center">
+        <p>正在加载电影数据...</p>
+    </div>
+</div>
+
+<div class="row text-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="pagination">
+            <!-- Pagination -->
+        </ul>
+    </nav>
+</div>
+
+<!-- Movie Detail Modal -->
+<div class="modal fade" id="movieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal-title">电影详情</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="" id="modal-img" class="img-responsive">
+            </div>
+            <div class="col-md-8">
+                <p><strong>年代:</strong> <span id="modal-year"></span></p>
+                <p><strong>国家:</strong> <span id="modal-country"></span></p>
+                <p><strong>评分:</strong> <span id="modal-star" class="text-warning"></span></p>
+                <p><strong>导演:</strong> <span id="modal-director"></span></p>
+                <p><strong>主演:</strong> <span id="modal-cast"></span></p>
+                <p><strong>类型:</strong> <span id="modal-tags"></span></p>
+                <p><strong>简介:</strong> <span id="modal-desc"></span></p>
+                
+                <hr>
+                {% if user.is_authenticated %}
+                <div class="form-group">
+                    <label>我的评分:</label>
+                    <div class="btn-group" data-toggle="buttons" id="rating-group">
+                        <label class="btn btn-default"><input type="radio" name="rating" value="1"> 1</label>
+                        <label class="btn btn-default"><input type="radio" name="rating" value="2"> 2</label>
+                        <label class="btn btn-default"><input type="radio" name="rating" value="3"> 3</label>
+                        <label class="btn btn-default"><input type="radio" name="rating" value="4"> 4</label>
+                        <label class="btn btn-default"><input type="radio" name="rating" value="5"> 5</label>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm" id="submit-rating">提交评分</button>
+                    <span id="rating-msg" class="text-success" style="display:none; margin-left: 10px;">已保存</span>
+                </div>
+                {% else %}
+                <p class="text-muted">登录后可评分和收藏</p>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        {% if user.is_authenticated %}
+        <button type="button" class="btn btn-primary" id="btn-favorite">收藏</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

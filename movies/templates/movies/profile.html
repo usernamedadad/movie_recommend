@@ -1,0 +1,227 @@
+{% extends 'movies/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>个人中心</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#favorites" aria-controls="favorites" role="tab" data-toggle="tab">我的收藏</a></li>
+            <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">我的评分</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" style="padding-top: 20px;">
+            <div role="tabpanel" class="tab-pane active" id="favorites">
+                <div class="row movie-row" id="favorite-list">
+                    <p class="text-center">加载中...</p>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="ratings">
+                <div class="row movie-row" id="rating-list">
+                    <p class="text-center">加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Movie Detail Modal (Reused) -->
+<div class="modal fade" id="movieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal-title">电影详情</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="" id="modal-img" class="img-responsive">
+            </div>
+            <div class="col-md-8">
+                <p><strong>年代:</strong> <span id="modal-year"></span></p>
+                <p><strong>国家:</strong> <span id="modal-country"></span></p>
+                <p><strong>评分:</strong> <span id="modal-star" class="text-warning"></span></p>
+                <p><strong>导演:</strong> <span id="modal-director"></span></p>
+                <p><strong>主演:</strong> <span id="modal-cast"></span></p>
+                <p><strong>类型:</strong> <span id="modal-tags"></span></p>
+                <p><strong>简介:</strong> <span id="modal-desc"></span></p>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    loadFavorites();
+    loadRatings();
+
+    function loadFavorites() {
+        $.ajax({
+            url: '/api/favorites/',
+            type: 'GET',
+            success: function(data) {
+                var html = '';
+                if (data.results.length === 0) {
+                    html = '<div class="col-md-12 text-center">暂无收藏</div>';
+                } else {
+                    $.each(data.results, function(index, item) {
+                        var movie = item.movie_details;
+                        var actionBtn = '<button class="btn btn-danger btn-xs delete-favorite" data-id="' + item.id + '" style="margin-left: 5px;">取消收藏</button>';
+                        html += buildMovieCard(movie, null, actionBtn);
+                    });
+                }
+                $('#favorite-list').html(html);
+            }
+        });
+    }
+
+    function loadRatings() {
+        $.ajax({
+            url: '/api/ratings/',
+            type: 'GET',
+            success: function(data) {
+                var html = '';
+                if (data.results.length === 0) {
+                    html = '<div class="col-md-12 text-center">暂无评分</div>';
+                } else {
+                    $.each(data.results, function(index, item) {
+                        var movie = item.movie_details;
+                        // Add user score to card
+                        var extra = '<p>我的评分: <span class="text-danger">' + item.score + '</span></p>';
+                        var actionBtn = '<button class="btn btn-danger btn-xs delete-rating" data-id="' + item.id + '" style="margin-left: 5px;">删除评分</button>';
+                        html += buildMovieCard(movie, extra, actionBtn);
+                    });
+                }
+                $('#rating-list').html(html);
+            }
+        });
+    }
+
+    function buildMovieCard(movie, extraHtml, actionBtnHtml) {
+        var imgUrl = movie.image_link;
+        if (!imgUrl) imgUrl = 'https://via.placeholder.com/300x450?text=No+Image';
+        
+        var html = '<div class="col-md-3 col-sm-6">';
+        html += '  <div class="thumbnail movie-card">';
+        html += '    <img src="' + imgUrl + '" alt="' + movie.title + '" class="movie-img" onerror="this.src=\'https://via.placeholder.com/300x450?text=Error\'">';
+        html += '    <div class="caption">';
+        html += '      <h4 class="text-nowrap" style="overflow:hidden;text-overflow:ellipsis;" title="' + movie.title + '">' + movie.title + '</h4>';
+        html += '      <p>TMDB评分: <span class="text-warning">' + movie.star + '</span></p>';
+        if (extraHtml) html += extraHtml;
+        html += '      <p>';
+        html += '        <a href="#" class="btn btn-primary btn-sm view-details" data-id="' + movie.id + '" role="button">详情</a>';
+        if (actionBtnHtml) html += actionBtnHtml;
+        html += '      </p>';
+        html += '    </div>';
+        html += '  </div>';
+        html += '</div>';
+        return html;
+    }
+
+    // CSRF Token setup for AJAX (Copied from app.js for profile page independence)
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    // Delete Favorite
+    $(document).on('click', '.delete-favorite', function(e) {
+        e.preventDefault();
+        if(!confirm('确定要取消收藏吗？')) return;
+        var id = $(this).data('id');
+        var $card = $(this).closest('.col-md-3');
+        $.ajax({
+            url: '/api/favorites/' + id + '/',
+            type: 'DELETE',
+            success: function() {
+                $card.fadeOut(300, function() { $(this).remove(); });
+            },
+            error: function() {
+                alert('操作失败');
+            }
+        });
+    });
+
+    // Delete Rating
+    $(document).on('click', '.delete-rating', function(e) {
+        e.preventDefault();
+        if(!confirm('确定要删除这条评分吗？')) return;
+        var id = $(this).data('id');
+        var $card = $(this).closest('.col-md-3');
+        $.ajax({
+            url: '/api/ratings/' + id + '/',
+            type: 'DELETE',
+            success: function() {
+                $card.fadeOut(300, function() { $(this).remove(); });
+            },
+            error: function() {
+                alert('操作失败');
+            }
+        });
+    });
+
+    // Bind click event for details (Delegated)
+    $(document).on('click', '.view-details', function(e) {
+        e.preventDefault();
+        var movieId = $(this).data('id');
+        // Reuse the loadMovieDetail function from app.js if possible, 
+        // but since it's not global, we might need to duplicate or expose it.
+        // For simplicity, let's just call the API again here.
+        $.ajax({
+            url: '/api/movies/' + movieId + '/',
+            type: 'GET',
+            success: function(movie) {
+                $('#modal-title').text(movie.title);
+                $('#modal-img').attr('src', movie.image_link);
+                $('#modal-year').text(movie.years);
+                $('#modal-country').text(movie.country);
+                $('#modal-star').text(movie.star);
+                $('#modal-director').text(movie.director_description);
+                $('#modal-cast').text(movie.leader);
+                $('#modal-tags').text(movie.alltags);
+                $('#modal-desc').text(movie.description);
+                $('#movieModal').modal('show');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

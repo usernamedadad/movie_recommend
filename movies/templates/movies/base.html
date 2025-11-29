@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>电影推荐系统</title>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* body padding moved to style.css */
+        .movie-card { margin-bottom: 20px; }
+        .movie-img { width: 100%; height: 300px; object-fit: cover; }
+    </style>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">电影推荐系统</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            {% if user.is_authenticated %}
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">首页</a></li>
+                <li><a href="#hot" id="nav-hot">热门影片</a></li>
+                <li><a href="#top" id="nav-top">高分榜</a></li>
+                <li><a href="#recommend" id="nav-recommend">猜你喜欢</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" id="search-input" class="form-control" placeholder="搜索电影...">
+                </div>
+                <button type="button" id="search-btn" class="btn btn-default">搜索</button>
+            </form>
+            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}">个人中心 ({{ user.username }})</a></li>
+                    <li><a href="/logout/">退出</a></li>
+                {% else %}
+                    <li><a href="/login/">登录</a></li>
+                    <li><a href="/register/">注册</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- jQuery & Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
